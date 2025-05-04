@@ -65,22 +65,25 @@ const handleSelect = useCallback(async (type: string, value: string) => {
         Please go through the steps below to set your preferences.
       </div>
 
-      <details className="accordion" open>
-        <summary>あなたの英語レベルは？ / Your English Level</summary>
-        <div className="options">
-          {['🔰 初級', '🔄 中下級', '🔁 中上級', '🧠 上級', '🎲 その他'].map(level => (
-            <button
-              key={level}
-              className={`option-button ${selections.level === level ? 'selected' : ''}`}
-              onClick={() => {
-  console.log('🧪 Button clicked:', level);  // ← TEMP LOG
-  handleSelect('level', level);
-}}
-            >{level}</button>
-          ))}
-          <input className="other-input" type="text" placeholder="レベルを入力 / Enter your level" onBlur={(e) => handleInput('level', e)} />
-        </div>
-      </details>
+<div className="accordion open">
+  <h3>あなたの英語レベルは？ / Your English Level</h3>
+  <div className="options">
+    {['🔰 初級', '🔄 中下級', '🔁 中上級', '🧠 上級', '🎲 その他'].map(level => (
+      <button
+        key={level}
+        className={`option-button ${selections.level === level ? 'selected' : ''}`}
+        onClick={() => {
+          console.log('🧪 Button clicked:', level);
+          handleSelect('level', level);
+        }}
+      >
+        {level}
+      </button>
+    ))}
+    <input className="other-input" type="text" placeholder="レベルを入力 / Enter your level" onBlur={(e) => handleInput('level', e)} />
+  </div>
+</div>
+
 
       <details className="accordion">
         <summary>会話をしたい場所は？ / Where will the conversation happen?</summary>
