@@ -1,0 +1,89 @@
+body {
+  font-family: sans-serif;
+  background: #f9f9f9;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+}
+
+.instruction-box {
+  background-color: #f0f8ff;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.accordion {
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.accordion summary {
+  padding: 14px;
+  font-weight: bold;
+  background: #e0f7fa;
+  cursor: pointer;
+}
+
+.accordion summary:hover {
+  background: #b2ebf2;
+}
+
+.options {
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.option-button {
+  padding: 10px 14px;
+  border: none;
+  background: #eee;
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 1 1 45%;
+}
+
+.option-button.selected {
+  background: #cce5ff !important;
+  font-weight: bold;
+}
+
+.start-section {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.start-button {
+  padding: 10px 24px;
+  font-size: 16px;
+  border: none;
+  background: #4caf50;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.start-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.other-input {
+  flex: 1 1 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+

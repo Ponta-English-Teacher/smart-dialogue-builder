@@ -1,88 +1,129 @@
 'use client';
 
 import React, { useState } from 'react';
+import './page.css';
 
 export default function Home() {
-  const [level, setLevel] = useState('');
-  const [places, setPlaces] = useState<string[]>([]);
-  const [goals, setGoals] = useState<string[]>([]);
-  const [roles, setRoles] = useState<string[]>([]);
+  const [selections, setSelections] = useState({
+    level: '',
+    place: '',
+    goal: '',
+    role: '',
+    userVoice: '',
+    partnerVoice: ''
+  });
 
-  const [selectedPlace, setSelectedPlace] = useState('');
-  const [selectedGoal, setSelectedGoal] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
+  const isStartEnabled = Object.values(selections).every(Boolean);
 
-  const [userVoice, setUserVoice] = useState('');
-  const [partnerVoice, setPartnerVoice] = useState('');
+  const handleSelect = (type: string, value: string) => {
+    setSelections(prev => ({ ...prev, [type]: value }));
+  };
 
-  const isStartEnabled = level && selectedPlace && selectedGoal && selectedRole && userVoice && partnerVoice;
+  const handleInput = (type: string, event: React.FocusEvent<HTMLInputElement>) => {
+    const value = event.target.value.trim();
+    if (value) handleSelect(type, value);
+  };
 
-  const fetchOptions = async (lvl: string) => {
-    setLevel(lvl);
-    const res = await fetch('/api/setup-options', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ level: lvl })
-    });
-    const data = await res.json();
-    setPlaces(data.places || []);
-    setGoals(data.goals || []);
-    setRoles(data.roles || []);
+  const startDialogue = () => {
+    alert("🚀 Moving to the main part...");
+    // TODO: implement navigation to dialogue interface
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
-      <h2>🗣️ 会話設定 / Conversation Setup</h2>
-
-      <div style={{ marginBottom: 20 }}>
-        <strong>📈 レベルを選んでください / Choose your level:</strong><br />
-        {['初級', '中級', '上級'].map((lvl) => (
-          <button key={lvl} onClick={() => fetchOptions(lvl)} style={{ margin: 4 }}>{lvl}</button>
-        ))}
+    <div className="container">
+      <div className="instruction-box">
+        <strong>📘 英語での会話練習を始めましょう。</strong><br />
+        必要な情報を順番に選んでください。<br />
+        🗣️ Let’s get ready for your English conversation.<br />
+        Please go through the steps below to set your preferences.
       </div>
 
-      {places.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
-          <strong>📍 場所を選んでください / Place:</strong><br />
-          {places.map((p) => (
-            <button key={p} onClick={() => setSelectedPlace(p)} style={{ margin: 4 }}>{p}</button>
+      <details className="accordion">
+        <summary>あなたの英語レベルは？ / Your English Level</summary>
+        <div className="options">
+          {['🔰 初級', '🔄 中下級', '🔁 中上級', '🧠 上級', '🎲 その他'].map(level => (
+            <button
+              key={level}
+              className={`option-button ${selections.level === level ? 'selected' : ''}`}
+              onClick={() => handleSelect('level', level)}
+            >{level}</button>
+          ))}
+          <input className="other-input" type="text" placeholder="レベルを入力 / Enter your level" onBlur={(e) => handleInput('level', e)} />
+        </div>
+      </details>
+
+      <details className="accordion">
+        <summary>会話をしたい場所は？ / Where will the conversation happen?</summary>
+        <div className="options">
+          {['🍽️ レストラン', '🏨 ホテル', '🏪 コンビニ', '🏥 病院', '✈️ 空港', '🚉 その他'].map(place => (
+            <button
+              key={place}
+              className={`option-button ${selections.place === place ? 'selected' : ''}`}
+              onClick={() => handleSelect('place', place)}
+            >{place}</button>
+          ))}
+          <input className="other-input" type="text" placeholder="場所を入力 / Enter place" onBlur={(e) => handleInput('place', e)} />
+        </div>
+      </details>
+
+      <details className="accordion">
+        <summary>何をしたいですか？ / What do you want to do?</summary>
+        <div className="options">
+          {['📅 予約をしたい', '🍽️ 食事をしたい', '📖 メニューを見せてほしい', '💬 おすすめを聞きたい', '🎲 その他'].map(goal => (
+            <button
+              key={goal}
+              className={`option-button ${selections.goal === goal ? 'selected' : ''}`}
+              onClick={() => handleSelect('goal', goal)}
+            >{goal}</button>
+          ))}
+          <input className="other-input" type="text" placeholder="目的を入力 / Enter your goal" onBlur={(e) => handleInput('goal', e)} />
+        </div>
+      </details>
+
+      <details className="accordion">
+        <summary>あなたの役割は？ / Your Role</summary>
+        <div className="options">
+          {['🙋 客として話す', '🧑‍💼 店員として話す', '🎭 その他'].map(role => (
+            <button
+              key={role}
+              className={`option-button ${selections.role === role ? 'selected' : ''}`}
+              onClick={() => handleSelect('role', role)}
+            >{role}</button>
+          ))}
+          <input className="other-input" type="text" placeholder="役割を入力 / Enter your role" onBlur={(e) => handleInput('role', e)} />
+        </div>
+      </details>
+
+      <details className="accordion">
+        <summary>声の性別を選んでください / Choose the voice gender</summary>
+        <div className="options">
+          <div style={{ width: '100%', fontWeight: 'bold' }}>👤 あなたの声 / Your Voice:</div>
+          {['👩 女性', '👨 男性'].map(v => (
+            <button
+              key={v + 'user'}
+              className={`option-button ${selections.userVoice === v ? 'selected' : ''}`}
+              onClick={() => handleSelect('userVoice', v)}
+            >{v}</button>
+          ))}
+          <div style={{ width: '100%', fontWeight: 'bold', marginTop: 10 }}>🎧 相手の声 / Partner's Voice:</div>
+          {['👩 女性', '👨 男性'].map(v => (
+            <button
+              key={v + 'partner'}
+              className={`option-button ${selections.partnerVoice === v ? 'selected' : ''}`}
+              onClick={() => handleSelect('partnerVoice', v)}
+            >{v}</button>
           ))}
         </div>
-      )}
+      </details>
 
-      {goals.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
-          <strong>🎯 目的を選んでください / Goal:</strong><br />
-          {goals.map((g) => (
-            <button key={g} onClick={() => setSelectedGoal(g)} style={{ margin: 4 }}>{g}</button>
-          ))}
-        </div>
-      )}
-
-      {roles.length > 0 && (
-        <div style={{ marginBottom: 20 }}>
-          <strong>👥 役割を選んでください / Role:</strong><br />
-          {roles.map((r) => (
-            <button key={r} onClick={() => setSelectedRole(r)} style={{ margin: 4 }}>{r}</button>
-          ))}
-        </div>
-      )}
-
-      <div style={{ marginBottom: 20 }}>
-        <strong>🎤 あなたの声 / Your Voice:</strong><br />
-        <button onClick={() => setUserVoice('女性')}>👩 女性</button>
-        <button onClick={() => setUserVoice('男性')}>👨 男性</button>
+      <div className="start-section">
+        <button
+          className="start-button"
+          onClick={startDialogue}
+          disabled={!isStartEnabled}
+        >➡️ スタート / Start</button>
       </div>
-
-      <div style={{ marginBottom: 20 }}>
-        <strong>🎧 相手の声 / Partner's Voice:</strong><br />
-        <button onClick={() => setPartnerVoice('女性')}>👩 女性</button>
-        <button onClick={() => setPartnerVoice('男性')}>👨 男性</button>
-      </div>
-
-      <button disabled={!isStartEnabled} style={{ padding: '10px 20px', backgroundColor: isStartEnabled ? '#4CAF50' : '#ccc', color: 'white', border: 'none', cursor: isStartEnabled ? 'pointer' : 'not-allowed' }}>
-        ➡️ スタート / Start
-      </button>
     </div>
   );
 }
+
