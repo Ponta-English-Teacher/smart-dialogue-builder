@@ -72,7 +72,10 @@ const handleSelect = useCallback(async (type: string, value: string) => {
             <button
               key={level}
               className={`option-button ${selections.level === level ? 'selected' : ''}`}
-              onClick={() => handleSelect('level', level)}
+              onClick={() => {
+  console.log('🧪 Button clicked:', level);  // ← TEMP LOG
+  handleSelect('level', level);
+}}
             >{level}</button>
           ))}
           <input className="other-input" type="text" placeholder="レベルを入力 / Enter your level" onBlur={(e) => handleInput('level', e)} />
