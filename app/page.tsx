@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react';
 import './page.css';
 
 export default function Home() {
+console.log("⚡ Client component rendered");
   const [selections, setSelections] = useState({
     level: '',
     place: '',
