@@ -13,10 +13,34 @@ export default function Home() {
     partnerVoice: ''
   });
 
+  const [options, setOptions] = useState({
+    goals: [] as string[],
+    places: [] as string[],
+    roles: [] as string[],
+  });
+
   const isStartEnabled = Object.values(selections).every(Boolean);
 
-  const handleSelect = (type: string, value: string) => {
+  const handleSelect = async (type: string, value: string) => {
     setSelections(prev => ({ ...prev, [type]: value }));
+
+    if (type === 'level') {
+      try {
+        const res = await fetch('/api/setup-options', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ level: value }),
+        });
+        const data = await res.json();
+        setOptions({
+          goals: data.goals || [],
+          places: data.places || [],
+          roles: data.roles || [],
+        });
+      } catch (err) {
+        console.error("❌ Failed to fetch setup options:", err);
+      }
+    }
   };
 
   const handleInput = (type: string, event: React.FocusEvent<HTMLInputElement>) => {
@@ -55,7 +79,7 @@ export default function Home() {
       <details className="accordion">
         <summary>会話をしたい場所は？ / Where will the conversation happen?</summary>
         <div className="options">
-          {['🍽️ レストラン', '🏨 ホテル', '🏪 コンビニ', '🏥 病院', '✈️ 空港', '🚉 その他'].map(place => (
+          {(options.places.length ? options.places : ['🍽️ レストラン', '🏨 ホテル', '🏪 コンビニ', '🏥 病院', '✈️ 空港', '🚉 その他']).map(place => (
             <button
               key={place}
               className={`option-button ${selections.place === place ? 'selected' : ''}`}
@@ -69,7 +93,7 @@ export default function Home() {
       <details className="accordion">
         <summary>何をしたいですか？ / What do you want to do?</summary>
         <div className="options">
-          {['📅 予約をしたい', '🍽️ 食事をしたい', '📖 メニューを見せてほしい', '💬 おすすめを聞きたい', '🎲 その他'].map(goal => (
+          {(options.goals.length ? options.goals : ['📅 予約をしたい', '🍽️ 食事をしたい', '📖 メニューを見せてほしい', '💬 おすすめを聞きたい', '🎲 その他']).map(goal => (
             <button
               key={goal}
               className={`option-button ${selections.goal === goal ? 'selected' : ''}`}
@@ -83,7 +107,28 @@ export default function Home() {
       <details className="accordion">
         <summary>あなたの役割は？ / Your Role</summary>
         <div className="options">
-          {['🙋 客として話す', '🧑‍💼 店員として話す', '🎭 その他'].map(role => (
+          {(options.roles.length ? options.roles : ['🙋 客として話す', '🧑‍🍳 店員として話す', '👨‍⚕️ 医者として話す', '👤 観光客として話す', '🎲 その他']).map(role => (
+            <button
+              key={role}
+              className={`option-button ${selections.role === role ? 'selected' : ''}`}
+              onClick={() => handleSelect('role', role)}
+            >{role}</button>
+          ))}
+          <input className="other-input" type="text" placeholder="役割を入力 / Enter your role" onBlur={(e) => handleInput('role', e)} />
+        </div>
+      </details>
+
+      <button
+        className="start-button"
+        onClick={startDialogue}
+        disabled={!isStartEnabled}
+      >
+        🚀 会話を始める / Start Dialogue
+      </button>
+    </div>
+  );
+}
+‍💼 店員として話す', '🎭 その他'].map(role => (
             <button
               key={role}
               className={`option-button ${selections.role === role ? 'selected' : ''}`}
