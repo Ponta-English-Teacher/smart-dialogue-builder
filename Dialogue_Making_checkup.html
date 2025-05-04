@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Dialogue Builder</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .page {
+      display: none;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .active {
+      display: block;
+    }
+    .dialogue-box, .saved-dialogues {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      margin: 20px 0;
+    }
+    .speaker {
+      font-weight: bold;
+      margin-top: 15px;
+    }
+    .line {
+      margin-bottom: 10px;
+    }
+    .button-set {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .reply-button, .option-button, .action-button {
+      padding: 10px;
+      font-size: 16px;
+      background: #e0f7fa;
+      border: none;
+      border-radius: 6px;
+      text-align: left;
+      transition: background 0.2s;
+    }
+    .reply-button:hover, .option-button:hover, .action-button:hover {
+      background: #b2ebf2;
+    }
+    .actions {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .translation {
+      font-size: 14px;
+      color: #555;
+      margin-top: 5px;
+    }
+    .saved-entry {
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    .turn {
+      margin-bottom: 20px;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 2px solid #00bcd4;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      max-width: 80%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Setup Page -->
+<div class="page active" id="setupPage">
+  <div class="dialogue-box">
+    <h2>🛠️ Dialogue Setup</h2>
+    <p>Select your context:</p>
+    <button class="reply-button" onclick="startDialogue()">🍽️ Restaurant</button>
+    <button class="reply-button" disabled>🏨 Hotel (Coming soon)</button>
+    <p style="margin-top: 20px;">Level:</p>
+    <button class="reply-button">🔰 Beginner</button>
+    <button class="reply-button">🧠 Advanced</button>
+  </div>
+</div>
+
+<!-- Dialogue Page -->
+<div class="page" id="dialoguePage">
+  <div class="dialogue-box" id="mainDialogue">
+    <div class="actions">
+      <button class="action-button" onclick="goBackToSetup()">🔙 Back to Setup</button>
+      <button class="option-button" onclick="toggleSound()" id="soundToggle">🔊 Sound: On</button>
+    </div>
+
+    <div class="turn" id="turn1">
+      <div class="speaker">👨 Staff:</div>
+      <div class="line">Good evening. Table for how many?</div>
+      <button class="option-button">🔊 Play</button>
+
+      <div class="speaker">👤 You:</div>
+      <div class="button-set">
+        <button class="reply-button" onclick="scrollToTurn('turn2')">Just one, please.</button>
+        <button class="reply-button" onclick="scrollToTurn('turn2')">Two people.</button>
+        <button class="reply-button" onclick="scrollToTurn('turn2')">Can I see the menu?</button>
+        <button class="reply-button" onclick="showMicPopup('turn1', 'turn2')">🎤 Speak Instead</button>
+      </div>
+      <div class="actions">
+        <button onclick="toggleTranslation('trans1')">📘 Show Translation</button>
+        <div id="trans1" class="translation" style="display: none;">
+          「こんばんは。何名様ですか？」
+        </div>
+      </div>
+    </div>
+
+    <div class="turn" id="turn2">
+      <div class="speaker">👨 Staff:</div>
+      <div class="line">Right this way. Here's the menu.</div>
+      <button class="option-button">🔊 Play</button>
+
+      <div class="speaker">👤 You:</div>
+      <div class="button-set">
+        <button class="reply-button">Thank you.</button>
+        <button class="reply-button">What do you recommend?</button>
+        <button class="reply-button">Do you have a vegetarian menu?</button>
+        <button class="reply-button" onclick="showMicPopup('turn2', 'turn3')">🎤 Speak Instead</button>
+      </div>
+      <div class="actions">
+        <button onclick="toggleTranslation('trans2')">📘 Show Translation</button>
+        <div id="trans2" class="translation" style="display: none;">
+          「こちらへどうぞ。こちらがメニューです。」
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-button" onclick="saveToDialogueBox()">📥 Send to Dialogue Box</button>
+    </div>
+  </div>
+
+  <div class="saved-dialogues" id="dialogueBox">
+    <h3>🗃️ Dialogue Box</h3>
+  </div>
+</div>
+
+<!-- STT Popup with Suggestions -->
+<div class="popup" id="micPopup">
+  <h3>🎤 Speak now...</h3>
+  <p>(Simulated input: "I want sit")</p>
+  <p><strong>❓ Do you want to say:</strong></p>
+  <button onclick="handleSpokenReply('I want to sit.')">👉 I want to sit.</button><br>
+  <button onclick="handleSpokenReply('Can I sit here?')">👉 Can I sit here?</button><br>
+  <button onclick="handleSpokenReply('Could I get a seat?')">👉 Could I get a seat?</button><br>
+  <button onclick="retryMicInput()">🔁 Retry</button>
+  <br>
+  <button onclick="hideMicPopup()">❌ Cancel</button>
+</div>
+
+<script>
+  let soundOn = true;
+  let currentTurn = 'turn1';
+  let nextTurn = 'turn2';
+
+  function startDialogue() {
+    document.getElementById('setupPage').classList.remove('active');
+    document.getElementById('dialoguePage').classList.add('active');
+  }
+
+  function goBackToSetup() {
+    document.getElementById('dialoguePage').classList.remove('active');
+    document.getElementById('setupPage').classList.add('active');
+  }
+
+  function toggleTranslation(id) {
+    const trans = document.getElementById(id);
+    trans.style.display = (trans.style.display === 'none') ? 'block' : 'none';
+  }
+
+  function scrollToTurn(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function toggleSound() {
+    soundOn = !soundOn;
+    const toggleButton = document.getElementById('soundToggle');
+    toggleButton.innerText = soundOn ? '🔊 Sound: On' : '🔇 Sound: Off';
+  }
+
+  function showMicPopup(from = 'turn1', to = 'turn2') {
+    currentTurn = from;
+    nextTurn = to;
+    document.getElementById('micPopup').style.display = 'block';
+  }
+
+  function hideMicPopup() {
+    document.getElementById('micPopup').style.display = 'none';
+  }
+
+  function retryMicInput() {
+    alert("Please try speaking again.");
+    hideMicPopup();
+  }
+
+  function handleSpokenReply(text) {
+    const turn = document.getElementById(currentTurn);
+    const buttonSet = turn.querySelector('.button-set');
+    if (buttonSet) {
+      const userReplyDiv = document.createElement('div');
+      userReplyDiv.className = 'line';
+      userReplyDiv.innerHTML = `<strong>👤 You:</strong> ${text}`;
+      buttonSet.replaceWith(userReplyDiv);
+    }
+    hideMicPopup();
+    scrollToTurn(nextTurn);
+  }
+
+  function saveToDialogueBox() {
+    const box = document.getElementById('dialogueBox');
+    const entry = document.createElement('div');
+    entry.className = 'saved-entry';
+    entry.innerHTML = `
+      <div><strong>👨 Staff:</strong> Good evening. Table for how many?</div>
+      <div><strong>👤 You:</strong> [User's reply]</div>
+      <div><strong>👨 Staff:</strong> Right this way. Here's the menu.</div>
+      <div><strong>👤 You:</strong> [User's reply]</div>
+      <button class="option-button">🔊 Play</button>
+      <button class="option-button">📘 Show Translation</button>
+    `;
+    box.appendChild(entry);
+  }
+</script>
+
+</body>
+</html>

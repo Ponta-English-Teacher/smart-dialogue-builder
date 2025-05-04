@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Dialogue Setup</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .instruction-box {
+      background-color: #f0f8ff;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .accordion {
+      margin-bottom: 10px;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .accordion summary {
+      padding: 14px;
+      font-weight: bold;
+      background: #e0f7fa;
+      cursor: pointer;
+    }
+    .accordion summary:hover {
+      background: #b2ebf2;
+    }
+    .options {
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .option-button {
+      padding: 10px 14px;
+      border: none;
+      background: #eee;
+      border-radius: 6px;
+      cursor: pointer;
+      flex: 1 1 45%;
+    }
+    .option-button.selected {
+      background: #cce5ff !important;
+      font-weight: bold;
+    }
+    .start-section {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .start-button {
+      padding: 10px 24px;
+      font-size: 16px;
+      border: none;
+      background: #4caf50;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .start-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .other-input {
+      flex: 1 1 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+  </style>
+  <script>
+  const selections = {
+    level: false,
+    place: false,
+    goal: false,
+    role: false,
+    userVoice: false,
+    partnerVoice: false
+  };
+
+  function handleSelection(button, typeOverride = null) {
+    const group = button.closest('.options');
+    const buttons = group.querySelectorAll('.option-button');
+
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+
+    const type = typeOverride || group.closest('details').querySelector('summary').innerText;
+
+    if (type.includes('英語レベル')) selections.level = true;
+    else if (type.includes('場所')) selections.place = true;
+    else if (type.includes('何をしたい')) selections.goal = true;
+    else if (type.includes('役割')) selections.role = true;
+    else if (type === 'userVoice') selections.userVoice = true;
+    else if (type === 'partnerVoice') selections.partnerVoice = true;
+
+    checkAllSelected();
+  }
+
+  function checkAllSelected() {
+    const allSet = Object.values(selections).every(Boolean);
+    document.querySelector('.start-button').disabled = !allSet;
+  }
+
+  function startDialogue() {
+    alert("🚀 Moving to the main part...");
+    // Placeholder: Transition to main dialogue interface
+  }
+</script>
+</head>
+<body>
+<div class="container">
+  <div class="instruction-box">
+    <strong>📘 英語での会話練習を始めましょう。</strong><br>
+    必要な情報を順番に選んでください。<br>
+    🗣️ Let’s get ready for your English conversation.<br>
+    Please go through the steps below to set your preferences.
+  </div>
+
+  <details class="accordion">
+    <summary>あなたの英語レベルは？ / Your English Level</summary>
+    <div class="options">
+      <button class="option-button" onclick="handleSelection(this)">🔰 初級</button>
+      <button class="option-button" onclick="handleSelection(this)">🔄 中下級</button>
+      <button class="option-button" onclick="handleSelection(this)">🔁 中上級</button>
+      <button class="option-button" onclick="handleSelection(this)">🧠 上級</button>
+      <button class="option-button" onclick="handleSelection(this)">🎲 その他</button>
+      <input class="other-input" type="text" placeholder="レベルを入力 / Enter your level" />
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>会話をしたい場所は？ / Where will the conversation happen?</summary>
+    <div class="options">
+      <button class="option-button" onclick="handleSelection(this)">🍽️ レストラン</button>
+      <button class="option-button" onclick="handleSelection(this)">🏨 ホテル</button>
+      <button class="option-button" onclick="handleSelection(this)">🏪 コンビニ</button>
+      <button class="option-button" onclick="handleSelection(this)">🏥 病院</button>
+      <button class="option-button" onclick="handleSelection(this)">✈️ 空港</button>
+      <button class="option-button" onclick="handleSelection(this)">🚉 その他</button>
+      <input class="other-input" type="text" placeholder="場所を入力 / Enter place" />
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>何をしたいですか？ / What do you want to do?</summary>
+    <div class="options">
+      <button class="option-button" onclick="handleSelection(this)">📅 予約をしたい</button>
+      <button class="option-button" onclick="handleSelection(this)">🍽️ 食事をしたい</button>
+      <button class="option-button" onclick="handleSelection(this)">📖 メニューを見せてほしい</button>
+      <button class="option-button" onclick="handleSelection(this)">💬 おすすめを聞きたい</button>
+      <button class="option-button" onclick="handleSelection(this)">🎲 その他</button>
+      <input class="other-input" type="text" placeholder="目的を入力 / Enter your goal" />
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>あなたの役割は？ / Your Role</summary>
+    <div class="options">
+      <button class="option-button" onclick="handleSelection(this)">🙋 客として話す</button>
+      <button class="option-button" onclick="handleSelection(this)">🧑‍💼 店員として話す</button>
+      <button class="option-button" onclick="handleSelection(this)">🎭 その他</button>
+      <input class="other-input" type="text" placeholder="役割を入力 / Enter your role" />
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>声の性別を選んでください / Choose the voice gender</summary>
+    <div class="options" data-group="userVoice">
+      <div style="width: 100%; font-weight: bold;">👤 あなたの声 / Your Voice:</div>
+      <button class="option-button" onclick="handleSelection(this, 'userVoice')">👩 女性</button>
+      <button class="option-button" onclick="handleSelection(this, 'userVoice')">👨 男性</button>
+    </div>
+    <div class="options" data-group="partnerVoice">
+      <div style="width: 100%; font-weight: bold; margin-top:10px;">🎧 相手の声 / Partner's Voice:</div>
+      <button class="option-button" onclick="handleSelection(this, 'partnerVoice')">👩 女性</button>
+      <button class="option-button" onclick="handleSelection(this, 'partnerVoice')">👨 男性</button>
+    </div>
+  </details>
+
+  <div class="start-section">
+    <button class="start-button" onclick="startDialogue()" disabled>➡️ スタート / Start</button>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Chat API</title>
+</head>
+<body>
+  <h2>Chat API Test</h2>
+  <textarea id="message" rows="4" cols="50" placeholder="Type a message..."></textarea><br>
+  <button onclick="sendMessage()">Send</button>
+
+  <h3>Response:</h3>
+  <pre id="output">Waiting for input...</pre>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("message").value;
+      document.getElementById("output").innerText = "⏳ Sending...";
+
+      try {
+        const response = await fetch("https://smart-dialogue-builder.vercel.app/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: input })
+        });
+
+        const result = await response.json();
+        document.getElementById("output").innerText = JSON.stringify(result, null, 2);
+        console.log("✅ Response received:", result);
+
+      } catch (error) {
+        document.getElementById("output").innerText = "❌ Error: " + error.message;
+        console.error("❌ Fetch failed:", error);
+      }
+    }
+  </script>
+</body>
+</html>
