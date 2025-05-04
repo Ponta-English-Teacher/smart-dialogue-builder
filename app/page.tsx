@@ -65,7 +65,7 @@ const handleSelect = useCallback(async (type: string, value: string) => {
         Please go through the steps below to set your preferences.
       </div>
 
-      <details className="accordion">
+      <details className="accordion" open>
         <summary>あなたの英語レベルは？ / Your English Level</summary>
         <div className="options">
           {['🔰 初級', '🔄 中下級', '🔁 中上級', '🧠 上級', '🎲 その他'].map(level => (
