@@ -21,28 +21,31 @@ export default function Home() {
 
   const isStartEnabled = Object.values(selections).every(Boolean);
 
-  const handleSelect = async (type: string, value: string) => {
-    setSelections(prev => ({ ...prev, [type]: value }));
+const handleSelect = async (type: string, value: string) => {
+  console.log(`📍 Selected ${type}: ${value}`); // ← Add this line
 
-    if (type === 'level') {
-      try {
-        const res = await fetch('/api/setup-options', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ level: value }),
-        });
-        const data = await res.json();
-        setOptions({
-          goals: data.goals || [],
-          places: data.places || [],
-          roles: data.roles || [],
-        });
-      } catch (err) {
-        console.error("❌ Failed to fetch setup options:", err);
-      }
+  setSelections(prev => ({ ...prev, [type]: value }));
+
+  if (type === 'level') {
+    try {
+      const res = await fetch('/api/setup-options', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ level: value }),
+      });
+      const data = await res.json();
+      console.log("🎯 Fetched from ChatGPT:", data); // ← Add this too
+
+      setOptions({
+        goals: data.goals || [],
+        places: data.places || [],
+        roles: data.roles || [],
+      });
+    } catch (err) {
+      console.error("❌ Failed to fetch setup options:", err); // ← Already there, good
     }
-  };
-
+  }
+};
   const handleInput = (type: string, event: React.FocusEvent<HTMLInputElement>) => {
     const value = event.target.value.trim();
     if (value) handleSelect(type, value);
